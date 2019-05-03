@@ -1,6 +1,8 @@
+// import modules
 import {removeStopWords} from './stopwords.js';
 
 
+// initialize variables 
 var article;
 var api = 'https://newsapi.org/v2/everything?q=';
 var apiKey = '&apiKey=7f3ff3ff4daf4191ae6f7e2ba9a4a2f1';
@@ -50,18 +52,25 @@ var input;
 //     "within", "without", "would", "yet", "you", "your", "yours", "yourself",
 //     "yourselves"];
 
-
+// get ID from form
 var form = document.getElementById("searchForm");
+// add event listener to submit button, and run articleAsk
 form.addEventListener("submit", articleAsk);
 
+
+// define articleAsk
 function articleAsk(e){
 
  e.preventDefault();    // We want to write our own submit behavior, so we override the default behavior.
 
-
+// define input as the value of the search box
  input = document.getElementById("searchBox").value;
 
+// building the request url for api
  var url = api + input + apiKey ;
+
+// make the api request and then when the request is resolved, get the response and change it to json
+//only when that is complete process article description text to a string
 
  fetch(url)
  .then(function(response){
@@ -85,15 +94,22 @@ function articleAsk(e){
 	});
 }
 
+//take the string and make it an array, then picking random words to make sure they are not stop words
+
 function getImages(allText){
 
 	var imagesToFind = allText.split(" ");
+
 	// for module
 	var randomList = removeStopWords(imagesToFind);
 
+	
 	//version without module
+	// make an empty variable, keep picking random words until we get 100 non-stop words, put it in variable nextWord
+
 	// let randomList = [];
 	// let nextWord;
+	
 
 	// while (randomList.length < 80) {
 	// 	nextWord = imagesToFind[Math.floor(Math.random() * imagesToFind.length)];
@@ -104,9 +120,7 @@ function getImages(allText){
 	// }
 
 
-
-
-	console.log(randomList);
+//loop through randomList (search terms), then make request to the img api, return first three results of the api request
 
 	for (let i=0; i < randomList.length ; i++){
 		  var imgurl = "https://pixabay.com/api/?key=11756178-018e6a4e6ee5bcae5027c0d56&page=1&q=" + randomList[i]+"&page=1&per_page=3";
@@ -116,10 +130,9 @@ function getImages(allText){
       //bringing the response as json
           return response.json();
       	})
-
            .then(function(resp){
 
-		// console.log(imgurl);
+// parse results, find the parts that we want and create a DOM element for each image
 		  var image = resp["hits"];
 
 		document.getElementById("responseImagesHere").innerHTML += "<img src="+image[0]["largeImageURL"]+" title="+randomList[i]+">";
